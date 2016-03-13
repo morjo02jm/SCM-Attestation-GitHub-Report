@@ -1,5 +1,5 @@
 #! /bin/bash
-cd /c/Users/faudo01/Documents/Github/DevelopmentAccess/githubreports
+cd /c/Users/faudo01/Documents/Github/githubreports
 ssh -p 122 admin@github-isl-01.ca.com "ghe-org-admin-promote -u toolsadmin"
 rc=$?; if [[ $rc != 0 ]]; then exit $rc+1000; fi
 now="$(date +'%Y_%m_%d_%H_%M_%S')"
