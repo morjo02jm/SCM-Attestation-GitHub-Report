@@ -1,7 +1,7 @@
 #! /bin/bash
 
 cd /c/Users/toolsadmin/Documents/Github/githubreports
-ssh -l toolsadmin -p 122 admin@github-isl-01.ca.com "ghe-org-admin-promote -u toolsadmin"
+ssh -i /c/Users/toolsadmin/.ssh/id_rsa -p 122 admin@github-isl-01.ca.com "ghe-org-admin-promote -u toolsadmin"
 rc=$?; if [[ $rc != 0 ]]; then exit $rc+1000; fi
 now="$(date +'%Y_%m_%d_%H_%M_%S')"
 ruby attestation_by_owner.rb $1 > /c/Users/toolsadmin/Documents/CSCR/githubreports/attestation_$now.tsv
