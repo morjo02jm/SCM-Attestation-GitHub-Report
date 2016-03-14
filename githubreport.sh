@@ -1,9 +1,13 @@
 #! /bin/bash
+echo "step 0"
 cd /c/Users/toolsadmin/Documents/Github/githubreports
+echo "step 1"
 ssh -p 122 admin@github-isl-01.ca.com "ghe-org-admin-promote -u toolsadmin"
+echo "step 2"
 rc=$?; if [[ $rc != 0 ]]; then exit $rc+1000; fi
 now="$(date +'%Y_%m_%d_%H_%M_%S')"
 ruby attestation_by_owner.rb $1 > /c/Users/toolsadmin/Documents/CSCR/githubreports/attestation_$now.tsv
+echo "step 3"
 rc=$?; if [[ $rc != 0 ]]; then exit $rc+2000; fi
 
 #find "/c/Users/toolsadmin/Downloads" -name "all-*.csv" -exec rm {} \;
