@@ -35,11 +35,15 @@ rc=$?; if [[ $rc != 0 ]]; then exit $rc+2000; fi
 #sftp -b /c/Users/faudo01/Documents/CSCR/githubreport_sftp2.txt -oPort=122 admin@github-isl-01.ca.com
 #ssh -p 122 admin@github-isl-01.ca.com "sudo rm /tmp/*.csv" 
 
+# Note: because the initial curl call can result in an indirection, the curl calls are run multiple times
 cd /c/Users/toolsadmin/Documents/CSCR/githubreports
+curl -u "toolsadmin:$1" https://github-isl-01.ca.com/stafftools/reports/all_repositories.csv > all_repositories_$now.csv
 curl -u "toolsadmin:$1" https://github-isl-01.ca.com/stafftools/reports/all_repositories.csv > all_repositories_$now.csv
 rc=$?; if [[ $rc != 0 ]]; then exit $rc+3000; fi
 curl -u "toolsadmin:$1" https://github-isl-01.ca.com/stafftools/reports/all_organizations.csv > all_organizations_$now.csv
+curl -u "toolsadmin:$1" https://github-isl-01.ca.com/stafftools/reports/all_organizations.csv > all_organizations_$now.csv
 rc=$?; if [[ $rc != 0 ]]; then exit $rc+4000; fi
+curl -u "toolsadmin:$1" https://github-isl-01.ca.com/stafftools/reports/all_users.csv > all_users_$now.csv
 curl -u "toolsadmin:$1" https://github-isl-01.ca.com/stafftools/reports/all_users.csv > all_users_$now.csv
 rc=$?; if [[ $rc != 0 ]]; then exit $rc+5000; fi
 
