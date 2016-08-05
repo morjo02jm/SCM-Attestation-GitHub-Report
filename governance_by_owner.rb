@@ -1,14 +1,11 @@
 #Requirements:
-#The Source Code Attestation Report contents to contain the following data
+#  The Governance Minder Attestation Report contents to contain the following data:
 #
 #    SCM Tool and Instance
-#    The SCM Repository Name
-#    The SCM Repository Type (Public or Private Repository)
-#    The RnD SCM Project Area name
-#    The RnD SCM Project Team Area name
-#    The User Name associated to the SCM Project Area
-#    The User Account Name associated to the SCM Project Area used to access the SCM application
-#    The User SCM Project Roles - the type of access the user has to the SCM Project Area
+#    The SCM Organization login id
+#    The SCM Owners for the organization
+#    The User id associated to the SCM Project Area
+#    Whether the user is an org admin or not.
 
 require 'octokit'
 
