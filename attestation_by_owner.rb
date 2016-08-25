@@ -54,7 +54,7 @@ ghe.all_users().each do |org|
 					pull = repo[1]["pull"] ? 'Yes' : 'No'
 					admin = repo[1]["admin"] ? 'Yes' : 'No'
 					type = repo[2]? 'Private' : 'Public'
-					puts "#{org.login}\t***Organization***\t#{repo[0]}\t#{type}\t#{member.login}\t#{push}\t#{pull}\t#{admin}\t#{org_admin}"
+					puts "#{org.login}\t***Owner***\t#{repo[0]}\t#{type}\t#{member.login}\t#{push}\t#{pull}\t#{admin}\t#{org_admin}"
 				end # admin
 			end # each org member
 			
@@ -63,15 +63,25 @@ ghe.all_users().each do |org|
 				collabs = ghe.collabs(repo[4], {:accept => 'application/vnd.github.ironman-preview+json'}).map{ |c| [c.login, c.permissions]}
 			rescue  Octokit::NotFound
 				collabs = ['']
+			rescue Octokit::RepositoryUnavailable
+				collabs = ['']
 			end
 			
 			collabs.each do |collab|
-				org_admin = 'No'
-				push  = collab[1]["push"] ? 'Yes' : 'No'
-				pull  = collab[1]["pull"] ? 'Yes' : 'No'
-				admin = collab[1]["admin"] ? 'Yes' : 'No'
-				type = repo[2]? 'Private' : 'Public'
-				puts "#{org.login}\t***Collaborator***\t#{repo[0]}\t#{type}\t#{collab[0]}\t#{push}\t#{pull}\t#{admin}\t#{org_admin}"				
+			    if (!admins.include?(collab[0]))
+					org_admin = 'No'
+					if (collab[1] != nil)
+						push  = collab[1]["push"] ? 'Yes' : 'No'
+						pull  = collab[1]["pull"] ? 'Yes' : 'No'
+						admin = collab[1]["admin"] ? 'Yes' : 'No'
+					else
+						push  = 'No'
+						pull  = 'No'
+						admin = 'No'
+					end 
+					type = repo[2]? 'Private' : 'Public'
+					puts "#{org.login}\t***Collaborator***\t#{repo[0]}\t#{type}\t#{collab[0]}\t#{push}\t#{pull}\t#{admin}\t#{org_admin}"
+                end # not owner			
 			end # collaborators
 		end #each repo
 				
