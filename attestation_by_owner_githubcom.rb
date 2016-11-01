@@ -45,7 +45,8 @@ if org.type == 'Organization'
 		rescue  Octokit::NotFound
 		  trepos = ['']
 		end
-
+		
+        last = ""
 		ghe.team_members(team.id).each do |member|
 			trepos.each do |repo|
 				push = repo[1]["push"] ? 'Yes' : 'No'
@@ -53,7 +54,11 @@ if org.type == 'Organization'
 				admin = repo[1]["admin"] ? 'Yes' : 'No'
 				org_admin = admins.include?(member.login) ? 'Yes' : 'No'
 				type = repo[2]? 'Private' : 'Public'
-				puts "#{org.login}\t#{team.name}\t#{repo[0]}\t#{type}\t#{member.login}\t#{push}\t#{pull}\t#{admin}\t#{org_admin}"
+				this = "#{org.login}\t#{team.name}\t#{repo[0]}\t#{type}\t#{member.login}\t#{push}\t#{pull}\t#{admin}\t#{org_admin}"
+				if (!(this == last))
+					puts this
+				end
+				last = this
 			end #each repo
 		end #each team member
 	end #each team
