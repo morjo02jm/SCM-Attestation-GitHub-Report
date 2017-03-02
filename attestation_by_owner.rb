@@ -36,8 +36,28 @@ puts "Organization\tTeam\tRepository\tRepository Type\tUser ID\tCan Push\tCan Pu
 ghe.all_users().each do |org|
 	if org.type == 'Organization'
 		admins = ghe.organization_members(org.login, { :role => 'admin' }).map(&:login)
+				
+# repositories by teams	
+		ghe.org_teams(org.login).each do |team|
+			begin
+			  trepos = ghe.team_repositories(team.id, {:accept => 'application/vnd.github.ironman-preview+json'}).map{ |r| [r.name, r.permissions, r.private] }
+			rescue  Octokit::NotFound
+			  trepos = ['']
+			end
 
-## repositories by organization		
+			ghe.team_members(team.id).each do |member|
+			    trepos.each do |repo|
+					push = repo[1]["push"] ? 'Yes' : 'No'
+					pull = repo[1]["pull"] ? 'Yes' : 'No'
+					admin = repo[1]["admin"] ? 'Yes' : 'No'
+					org_admin = admins.include?(member.login) ? 'Yes' : 'No'
+					type = repo[2]? 'Private' : 'Public'
+					puts "#{org.login}\t#{team.name}\t#{repo[0]}\t#{type}\t#{member.login}\t#{push}\t#{pull}\t#{admin}\t#{org_admin}"
+			    end #each repo
+			end #each team member
+		end #each team
+
+# repositories by organization		
 		begin
 		  orepos = ghe.org_repositories(org.login, {:accept => 'application/vnd.github.ironman-preview+json'}).map{ |r| [r.name, r.permissions, r.private, r.owner, r.id] }
 		rescue  Octokit::NotFound
@@ -84,26 +104,6 @@ ghe.all_users().each do |org|
                 end # not owner			
 			end # collaborators
 		end #each repo
-				
-# repositories by teams	
-		ghe.org_teams(org.login).each do |team|
-			begin
-			  trepos = ghe.team_repositories(team.id, {:accept => 'application/vnd.github.ironman-preview+json'}).map{ |r| [r.name, r.permissions, r.private] }
-			rescue  Octokit::NotFound
-			  trepos = ['']
-			end
-
-			ghe.team_members(team.id).each do |member|
-			    trepos.each do |repo|
-					push = repo[1]["push"] ? 'Yes' : 'No'
-					pull = repo[1]["pull"] ? 'Yes' : 'No'
-					admin = repo[1]["admin"] ? 'Yes' : 'No'
-					org_admin = admins.include?(member.login) ? 'Yes' : 'No'
-					type = repo[2]? 'Private' : 'Public'
-					puts "#{org.login}\t#{team.name}\t#{repo[0]}\t#{type}\t#{member.login}\t#{push}\t#{pull}\t#{admin}\t#{org_admin}"
-			    end #each repo
-			end #each team member
-		end #each team
 	else #org.type == 'User'
 		begin
 		  repos = ghe.repos(org.login, {:accept => 'application/vnd.github.ironman-preview+json'}).map{ |r| [r.name, r.permissions, r.private] }
