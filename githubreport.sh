@@ -12,8 +12,8 @@ rc=$?; if [ $rc != 0 ]; then exit $rc+2000; fi
 ## Note: because the initial curl call can result in an indirection, the curl calls are run multiple times
 cd /c/AutoSys/CSCR/githubreports
 
-if [ "$dayofweek" != "0" ]; then
-else 
+if [ "$dayofweek" = "0" ] 
+then 
 curl -u "toolsadmin:$1" https://github-isl-01.ca.com/stafftools/reports/all_repositories.csv > all_repositories_$now.csv
 sleep 10
 curl -u "toolsadmin:$1" https://github-isl-01.ca.com/stafftools/reports/all_repositories.csv > all_repositories_$now.csv
@@ -60,7 +60,12 @@ cd /c/AutoSys/CSCR
 export JAVA_HOME=$JAVA_HOME_SCM_8
 #export PATH="$JAVA_HOME/bin":/c/AutoSys/CSCR/scmx86:$PATH
 export PATH="$JAVA_HOME/bin":$PATH
-if [ "$dayofweek" != "0" ]; then outfile ="-bcc faudo01@ca.com"; else outfile="-outputfile /c/AutoSys/CSCR/githubreports/governance_ghe_$now.tsv"; fi
+if [ "$dayofweek" != "0" ]
+then 
+outfile="-bcc faudo01@ca.com" 
+else 
+outfile="-outputfile /c/AutoSys/CSCR/githubreports/governance_ghe_$now.tsv" 
+fi
 java -Xmx1024m -jar githubrepldap.jar -repofile /c/AutoSys/CSCR/githubreports/attestation_github_$now.tsv -orgfile /c/AutoSys/CSCR/githubreports/all_organizations_$now.csv -userfile /c/AutoSys/CSCR/githubreports/all_users_$now.csv $outfile -log /c/AutoSys/CSCR/githubrepldap
 rc=$?; if [ $rc != 0 ]; then exit $rc+6000; fi
 
@@ -69,15 +74,30 @@ ruby attestation_by_owner_githubcom.rb $2 > /c/AutoSys/CSCR/githubreports/attest
 rc=$?; if [ $rc != 0 ]; then exit $rc+7000; fi
 
 cd /c/AutoSys/CSCR
-if [ "$dayofweek" != "0" ]]; then outfile ="-bcc faudo01@ca.com"; else outfile="-outputfile /c/AutoSys/CSCR/githubreports/governance_githubcom_$now.tsv"; fi
+if [ "$dayofweek" != "0" ]
+then 
+outfile="-bcc faudo01@ca.com"
+else 
+outfile="-outputfile /c/AutoSys/CSCR/githubreports/governance_githubcom_$now.tsv"
+fi
 java -Xmx1024m -jar githubrepldap.jar -rally -repofile /c/AutoSys/CSCR/githubreports/attestation_githubcom_$now.tsv -userfile /c/AutoSys/CSCR/github_user_mapping.csv -remove $outfile -log /c/AutoSys/CSCR/githubrepldap
 rc=$?; if [ $rc != 0 ]; then exit $rc+8000; fi
 
-if [ "$dayofweek" != "0" ]; then outfile ="-bcc faudo01@ca.com"; else outfile="-outputfile /c/AutoSys/CSCR/githubreports/governance_harvest_$now.tsv"; fi
+if [ "$dayofweek" != "0" ]
+then 
+outfile="-bcc faudo01@ca.com"
+else 
+outfile="-outputfile /c/AutoSys/CSCR/githubreports/governance_harvest_$now.tsv"
+fi
 java -Xmx1024m -jar scmldap.jar -report $outfile -log /c/AutoSys/CSCR/scmldap
 rc=$?; if [ $rc != 0 ]; then exit $rc+9000; fi
 
-if [ "$dayofweek" != "0" ]; then outfile ="-bcc faudo01@ca.com"; else outfile="-outputfile /c/AutoSys/CSCR/githubreports/governance_endevor_$now.tsv"; fi
+if [ "$dayofweek" != "0" ]
+then 
+outfile="-bcc faudo01@ca.com"
+else 
+outfile="-outputfile /c/AutoSys/CSCR/githubreports/governance_endevor_$now.tsv"
+fi
 java -Xmx1024m -jar endevorrepldap.jar $outfile -log /c/AutoSys/CSCR/endevorrepldap
 rc=$?; if [ $rc != 0 ]; then exit $rc+10000; fi
 
