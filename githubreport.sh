@@ -101,6 +101,15 @@ fi
 java -Xmx1024m -jar endevorrepldap.jar $outfile -log /c/AutoSys/CSCR/endevorrepldap
 rc=$?; if [ $rc != 0 ]; then exit $rc+10000; fi
 
+if [ "$dayofweek" != "0" ]
+then 
+outfile="-bcc faudo01@ca.com"
+else 
+outfile="-outputfile /c/AutoSys/CSCR/githubreports/governance_mainframe_$now.tsv"
+fi
+java -Xmx1024m -jar zOSrepldap.jar $outfile -log /c/AutoSys/CSCR/zOSrepldap
+rc=$?; if [ $rc != 0 ]; then exit $rc+11000; fi
+
 #cp -f /c/AutoSys/CSCR/githubreports/governance_github*_$now.csv /z/Reports/GovernanceMinder/
 
 exit 0
