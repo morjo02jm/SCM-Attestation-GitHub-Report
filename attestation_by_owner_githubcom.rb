@@ -25,7 +25,7 @@ ghe.auto_paginate = true
 
 # Write the TSV header
 
-#puts "Organization\tTeam\tRepository\tRepository Type\tUser ID\tCan Push\tCan Pull\tCan Admin\tIs Organization Admin"
+puts "Organization\tTeam\tRepository\tRepository Type\tUser ID\tCan Push\tCan Pull\tCan Admin\tIs Organization Admin"
 
 
 # We use the Octokit interface to call the GitHub API to 
@@ -35,10 +35,7 @@ ghe.auto_paginate = true
 
 
 #org = ghe.org('RallySoftware')
-#ghe.list_orgs().each do |org1|
-def print_orgs(ghe, orgs)
-  orgs.each do |org1|
-
+ghe.list_orgs().each do |org1|
 	org = ghe.org(org1.login)
     if org.type == 'Organization'
 		admins = ghe.organization_members(org.login, { :role => 'admin' }).map(&:login)
@@ -116,18 +113,4 @@ def print_orgs(ghe, orgs)
 			end # collaborators
 		end #each repo
 	end #check user type
-  end	
 end #loop over orgs
-
-ghe.list_orgs
-last_response = ghe.last_response
-
-puts "Organization\tTeam\tRepository\tRepository Type\tUser ID\tCan Push\tCan Pull\tCan Admin\tIs Organization Admin"
-print_orgs(ghe, last_response.data)
-
-#this piece of coding handles the pagination restriction in the ghe.orgs request
-
-until last_response.rels[:next].nil?
-  last_response = last_response.rels[:next].get
-  print_orgs(ghe, last_response.data)
-end
