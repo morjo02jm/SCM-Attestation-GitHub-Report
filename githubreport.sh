@@ -42,17 +42,17 @@ curl -u "toolsadmin:$1" https://github-isl-01.ca.com/stafftools/reports/all_orga
 rc=$?; if [ $rc != 0 ]; then exit $rc+4000; fi
 
 curl -u "toolsadmin:$1" https://github-isl-01.ca.com/stafftools/reports/all_users.csv > all_users_$now.csv
-sleep 40
+sleep 60
 curl -u "toolsadmin:$1" https://github-isl-01.ca.com/stafftools/reports/all_users.csv > all_users_$now.csv
-sleep 40
+sleep 60
 curl -u "toolsadmin:$1" https://github-isl-01.ca.com/stafftools/reports/all_users.csv > all_users_$now.csv
-sleep 40
+sleep 60
 curl -u "toolsadmin:$1" https://github-isl-01.ca.com/stafftools/reports/all_users.csv > all_users_$now.csv
-sleep 40
+sleep 60
 curl -u "toolsadmin:$1" https://github-isl-01.ca.com/stafftools/reports/all_users.csv > all_users_$now.csv
-sleep 40
+sleep 60
 curl -u "toolsadmin:$1" https://github-isl-01.ca.com/stafftools/reports/all_users.csv > all_users_$now.csv
-sleep 40
+sleep 60
 curl -u "toolsadmin:$1" https://github-isl-01.ca.com/stafftools/reports/all_users.csv > all_users_$now.csv
 rc=$?; if [ $rc != 0 ]; then exit $rc+5000; fi
 
