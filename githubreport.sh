@@ -62,7 +62,7 @@ export JAVA_HOME=$JAVA_HOME_SCM_8
 export PATH="$JAVA_HOME/bin":$PATH
 if [ "$dayofweek" != "0" ]
 then 
-outfile="-bcc faudo01@ca.com" 
+outfile="" 
 else 
 outfile="-outputfile /c/AutoSys/CSCR/githubreports/governance_ghe_$now.tsv" 
 fi
@@ -76,7 +76,7 @@ rc=$?; if [ $rc != 0 ]; then exit $rc+7000; fi
 cd /c/AutoSys/CSCR
 if [ "$dayofweek" != "0" ]
 then 
-outfile="-bcc faudo01@ca.com"
+outfile=""
 else 
 outfile="-outputfile /c/AutoSys/CSCR/githubreports/governance_githubcom_$now.tsv"
 fi
