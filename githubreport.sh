@@ -70,18 +70,18 @@ java -Xmx1024m -jar githubrepldap.jar -repofile /c/AutoSys/CSCR/githubreports/at
 rc=$?; if [ $rc != 0 ]; then exit $(($rc+6000)); fi
 
 cd /c/AutoSys/Github/githubreports
-ruby attestation_by_owner_githubcom.rb $2 > /c/AutoSys/CSCR/githubreports/attestation_githubcom_$now.tsv
-rc=$?; if [ $rc != 0 ]; then exit $(($rc+7000)); fi
+#ruby attestation_by_owner_githubcom.rb $2 > /c/AutoSys/CSCR/githubreports/attestation_githubcom_$now.tsv
+#rc=$?; if [ $rc != 0 ]; then exit $(($rc+7000)); fi
 
 cd /c/AutoSys/CSCR
-if [ "$dayofweek" != "0" ]
-then 
-outfile=""
-else 
-outfile="-outputfile /c/AutoSys/CSCR/githubreports/governance_githubcom_$now.tsv"
-fi
-java -Xmx1024m -jar githubrepldap.jar -rally -repofile /c/AutoSys/CSCR/githubreports/attestation_githubcom_$now.tsv -userfile /c/AutoSys/CSCR/github_user_mapping.csv -remove $outfile -log /c/AutoSys/CSCR/githubrepldap
-rc=$?; if [ $rc != 0 ]; then exit $(($rc+8000)); fi
+#if [ "$dayofweek" != "0" ]
+#then 
+#outfile=""
+#else 
+#outfile="-outputfile /c/AutoSys/CSCR/githubreports/governance_githubcom_$now.tsv"
+#fi
+#java -Xmx1024m -jar githubrepldap.jar -rally -repofile /c/AutoSys/CSCR/githubreports/attestation_githubcom_$now.tsv -userfile /c/AutoSys/CSCR/github_user_mapping.csv $outfile -remove -log /c/AutoSys/CSCR/githubrepldap
+#rc=$?; if [ $rc != 0 ]; then exit $(($rc+8000)); fi
 
 if [ "$dayofweek" != "0" ]
 then 
@@ -113,6 +113,21 @@ rc=$?; if [ $rc != 0 ]; then exit $(($rc+11000)); fi
 # github.com CA IDS
 java -Xmx1024m -jar identityservicesldap.jar -add IdentityServicesAddUsers.csv -ADgroups IdentityServicesADGroups.tsv -contacts IdentityServicesContacts.tsv -mapfile github_user_mapping.csv -updateorg -log /c/AutoSys/CSCR/identityservicesldap
 rc=$?; if [ $rc != 0 ]; then exit $(($rc+12000)); fi
+
+
+cd /c/AutoSys/Github/githubreports
+ruby attestation_by_owner_githubcom.rb $2 > /c/AutoSys/CSCR/githubreports/attestation_githubcom_$now.tsv
+rc=$?; if [ $rc != 0 ]; then exit $(($rc+7000)); fi
+
+cd /c/AutoSys/CSCR
+if [ "$dayofweek" != "0" ]
+then 
+outfile=""
+else 
+outfile="-outputfile /c/AutoSys/CSCR/githubreports/governance_githubcom_$now.tsv"
+fi
+java -Xmx1024m -jar githubrepldap.jar -rally -repofile /c/AutoSys/CSCR/githubreports/attestation_githubcom_$now.tsv -userfile /c/AutoSys/CSCR/github_user_mapping.csv $outfile -log /c/AutoSys/CSCR/githubrepldap
+rc=$?; if [ $rc != 0 ]; then exit $(($rc+8000)); fi
 
 
 #cp -f /c/AutoSys/CSCR/githubreports/governance_github*_$now.csv /z/Reports/GovernanceMinder/
