@@ -25,8 +25,9 @@ ghe.auto_paginate = true
 
 # Write the TSV header
 
-puts "Organization\tTeam\tRepository\tRepository Type\tUser ID\tCan Push\tCan Pull\tCan Admin\tIs Organization Admin"
-
+if (ARGV[1] == "RallySoftware")
+	puts "Organization\tTeam\tRepository\tRepository Type\tUser ID\tCan Push\tCan Pull\tCan Admin\tIs Organization Admin"
+end
 
 # We use the Octokit interface to call the GitHub API to 
 #  a) get all users and organization names
@@ -37,7 +38,7 @@ puts "Organization\tTeam\tRepository\tRepository Type\tUser ID\tCan Push\tCan Pu
 #org = ghe.org('RallySoftware')
 ghe.list_orgs().each do |org1|
 	org = ghe.org(org1.login)
-    if org.type == 'Organization'
+    if (org.type == 'Organization') && (org.login == ARGV[1]) #&& !(org.login == "CATechnologies")
 		admins = ghe.organization_members(org.login, { :role => 'admin' }).map(&:login)
 					
 # repositories by teams	
@@ -92,6 +93,14 @@ ghe.list_orgs().each do |org1|
 			rescue  Octokit::NotFound
 				collabs = ['']
 			rescue Octokit::RepositoryUnavailable
+				collabs = ['']
+			rescue Octokit::MethodNotAllowed
+				collabs = ['']
+			rescue Octokit::Forbidden
+				collabs = ['']
+			rescue Octokit::NotAcceptible
+				collabs = ['']
+			rescue Octokit::Error
 				collabs = ['']
 			end
 			
