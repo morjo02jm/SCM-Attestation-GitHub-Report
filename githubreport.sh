@@ -120,6 +120,12 @@ ruby attestation_by_owner_githubcom.rb $2 "CATechnologies" >> /c/AutoSys/CSCR/gi
 rc=$?; if [ $rc != 0 ]; then exit $(($rc+3000)); fi
 ruby attestation_by_owner_githubcom.rb $2 "RallyCommunity" >> /c/AutoSys/CSCR/githubreports/attestation_githubcom_$now.tsv 
 rc=$?; if [ $rc != 0 ]; then exit $(($rc+3000)); fi
+sleep 3600
+ruby attestation_by_owner_githubcom.rb $2 "waffleio" >> /c/AutoSys/CSCR/githubreports/attestation_githubcom_$now.tsv 
+rc=$?; if [ $rc != 0 ]; then exit $(($rc+3000)); fi
+ruby attestation_by_owner_githubcom.rb $2 "Blazemeter" >> /c/AutoSys/CSCR/githubreports/attestation_githubcom_$now.tsv 
+rc=$?; if [ $rc != 0 ]; then exit $(($rc+3000)); fi
+
 
 cd /c/AutoSys/CSCR
 if [ "$dayofweek" != "0" ]

@@ -45,6 +45,7 @@ ghe.all_users().each do |org|
 			  trepos = ['']
 			end
 
+			last = ""
 			ghe.team_members(team.id).each do |member|
 			    trepos.each do |repo|
 					push = repo[1]["push"] ? 'Yes' : 'No'
@@ -52,7 +53,11 @@ ghe.all_users().each do |org|
 					admin = repo[1]["admin"] ? 'Yes' : 'No'
 					org_admin = admins.include?(member.login) ? 'Yes' : 'No'
 					type = repo[2]? 'Private' : 'Public'
-					puts "#{org.login}\t#{team.name}\t#{repo[0]}\t#{type}\t#{member.login}\t#{push}\t#{pull}\t#{admin}\t#{org_admin}"
+					this = "#{org.login}\t#{team.name}\t#{repo[0]}\t#{type}\t#{member.login}\t#{push}\t#{pull}\t#{admin}\t#{org_admin}"
+					if (!(this == last))
+						puts this
+					end
+					last = this
 			    end #each repo
 			end #each team member
 		end #each team
@@ -64,6 +69,7 @@ ghe.all_users().each do |org|
 		  orepos = ['']
 		end
 
+		last = ""
 		orepos.each do |repo|
 			ghe.organization_members(org.login).each do |member|
 			# show owners
@@ -74,7 +80,11 @@ ghe.all_users().each do |org|
 					pull = repo[1]["pull"] ? 'Yes' : 'No'
 					admin = repo[1]["admin"] ? 'Yes' : 'No'
 					type = repo[2]? 'Private' : 'Public'
-					puts "#{org.login}\t***Owner***\t#{repo[0]}\t#{type}\t#{member.login}\t#{push}\t#{pull}\t#{admin}\t#{org_admin}"
+					this = "#{org.login}\t***Owner***\t#{repo[0]}\t#{type}\t#{member.login}\t#{push}\t#{pull}\t#{admin}\t#{org_admin}"
+					if (!(this == last))
+						puts this
+					end
+					last = this
 				end # admin
 			end # each org member
 			
@@ -100,7 +110,11 @@ ghe.all_users().each do |org|
 						admin = 'No'
 					end 
 					type = repo[2]? 'Private' : 'Public'
-					puts "#{org.login}\t***Collaborator***\t#{repo[0]}\t#{type}\t#{collab[0]}\t#{push}\t#{pull}\t#{admin}\t#{org_admin}"
+					this = "#{org.login}\t***Collaborator***\t#{repo[0]}\t#{type}\t#{collab[0]}\t#{push}\t#{pull}\t#{admin}\t#{org_admin}"
+					if (!(this == last))
+						puts this
+					end
+					last = this
                 end # not owner			
 			end # collaborators
 		end #each repo
@@ -110,7 +124,8 @@ ghe.all_users().each do |org|
 		rescue  Octokit::NotFound
 		  repos = ['']
 		end
-		
+
+        last = ""		
         repos.each do |repo|
 			orgname = '***User Repository***'
 			team = org.login
@@ -120,7 +135,11 @@ ghe.all_users().each do |org|
 			pull = repo[1]["pull"] ? 'Yes' : 'No'
 			admin = repo[1]["admin"] ? 'Yes' : 'No'
 			type = repo[2]? 'Private' : 'Public'
-			puts "#{orgname}\t#{team}\t#{reponame}\t#{type}\t#{org.login}\t#{push}\t#{pull}\t#{admin}\t#{org_admin}"		
+			this = "#{orgname}\t#{team}\t#{reponame}\t#{type}\t#{org.login}\t#{push}\t#{pull}\t#{admin}\t#{org_admin}"		
+			if (!(this == last))
+				puts this
+			end
+			last = this
         end # user repos	
 	end #check user type
 end #each Organization
