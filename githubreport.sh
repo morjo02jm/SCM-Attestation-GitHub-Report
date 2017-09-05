@@ -20,8 +20,8 @@ rc=$?; if [ $rc != 0 ]; then exit $(($rc+2000)); fi
 cd /c/AutoSys/CSCR/githubreports
 #GHE raw canned reports
 ## Note: because the initial curl call can result in an indirection, the curl calls are run multiple times
-if [ "$dayofweek" = "0" ] 
-then 
+#if [ "$dayofweek" = "0" ] 
+#then 
 curl -u "toolsadmin:$1" https://github-isl-01.ca.com/stafftools/reports/all_repositories.csv > all_repositories_$now.csv
 sleep 10
 curl -u "toolsadmin:$1" https://github-isl-01.ca.com/stafftools/reports/all_repositories.csv > all_repositories_$now.csv
@@ -34,7 +34,7 @@ curl -u "toolsadmin:$1" https://github-isl-01.ca.com/stafftools/reports/all_repo
 sleep 10
 curl -u "toolsadmin:$1" https://github-isl-01.ca.com/stafftools/reports/all_repositories.csv > all_repositories_$now.csv
 rc=$?; if [ $rc != 0 ]; then exit $(($rc+4000)); fi
-fi
+#fi
 
 curl -u "toolsadmin:$1" https://github-isl-01.ca.com/stafftools/reports/all_organizations.csv > all_organizations_$now.csv
 sleep 10
@@ -74,7 +74,7 @@ outfile=""
 else 
 outfile="-outputfile /c/AutoSys/CSCR/githubreports/governance_ghe_$now.tsv" 
 fi
-java -Xmx1024m -jar githubrepldap.jar -repofile /c/AutoSys/CSCR/githubreports/attestation_github_$now.tsv -orgfile /c/AutoSys/CSCR/githubreports/all_organizations_$now.csv -userfile /c/AutoSys/CSCR/githubreports/all_users_$now.csv $outfile -log /c/AutoSys/CSCR/githubrepldap
+java -Xmx1024m -jar githubrepldap.jar -inputfile /c/AutoSys/CSCR/githubreports/attestation_github_$now.tsv -repofile /c/AutoSys/CSCR/githubreports/all_repositories_$now.csv -orgfile /c/AutoSys/CSCR/githubreports/all_organizations_$now.csv -userfile /c/AutoSys/CSCR/githubreports/all_users_$now.csv $outfile -log /c/AutoSys/CSCR/githubrepldap
 rc=$?; if [ $rc != 0 ]; then exit $(($rc+7000)); fi
 
 # Harvest Governance
@@ -96,6 +96,22 @@ outfile="-outputfile /c/AutoSys/CSCR/githubreports/governance_endevor_$now.tsv"
 fi
 java -Xmx1024m -jar endevorrepldap.jar $outfile -log /c/AutoSys/CSCR/endevorrepldap
 rc=$?; if [ $rc != 0 ]; then exit $(($rc+10000)); fi
+
+# Mainframe z/OS z/VM z/VSE Governance
+if [ "$dayofweek" != "0" ]
+then 
+outfile=""
+sleep 3600
+else 
+outfile="-outputfile /c/AutoSys/CSCR/githubreports/governance_mainframe_$now.tsv"
+fi
+java -Xmx1024m -jar zOSrepldap.jar $outfile -log /c/AutoSys/CSCR/zOSrepldap
+rc=$?; if [ $rc != 0 ]; then exit $(($rc+11000)); fi
+
+# github.com CA IDS
+java -Xmx1024m -jar identityservicesldap.jar -add IdentityServicesAddUsers.csv -ADgroups IdentityServicesADGroups.tsv -contacts IdentityServicesContacts.tsv -mapfile github_user_mapping.csv -updateorg -log /c/AutoSys/CSCR/identityservicesldap
+rc=$?; if [ $rc != 0 ]; then exit $(($rc+12000)); fi
+
 
 #github.com raw usage data
 cd /c/AutoSys/Github/githubreports
@@ -122,26 +138,13 @@ rc=$?; if [ $rc != 0 ]; then exit $(($rc+3000)); fi
 cd /c/AutoSys/CSCR
 if [ "$dayofweek" != "0" ]
 then 
-outfile=""
+outfile="-remove"
 else 
 outfile="-remove -outputfile /c/AutoSys/CSCR/githubreports/governance_githubcom_$now.tsv"
 fi
-java -Xmx1024m -jar githubrepldap.jar -rally -repofile /c/AutoSys/CSCR/githubreports/attestation_githubcom_$now.tsv -userfile /c/AutoSys/CSCR/github_user_mapping.csv $outfile -log /c/AutoSys/CSCR/githubrepldap
+java -Xmx1024m -jar githubrepldap.jar -github.com -inputfile /c/AutoSys/CSCR/githubreports/attestation_githubcom_$now.tsv -userfile /c/AutoSys/CSCR/github_user_mapping.csv $outfile -log /c/AutoSys/CSCR/githubrepldap
 rc=$?; if [ $rc != 0 ]; then exit $(($rc+8000)); fi
 
-# Mainframe z/OS z/VM z/VSE Governance
-if [ "$dayofweek" != "0" ]
-then 
-outfile=""
-else 
-outfile="-outputfile /c/AutoSys/CSCR/githubreports/governance_mainframe_$now.tsv"
-fi
-java -Xmx1024m -jar zOSrepldap.jar $outfile -log /c/AutoSys/CSCR/zOSrepldap
-rc=$?; if [ $rc != 0 ]; then exit $(($rc+11000)); fi
-
-# github.com CA IDS
-java -Xmx1024m -jar identityservicesldap.jar -add IdentityServicesAddUsers.csv -ADgroups IdentityServicesADGroups.tsv -contacts IdentityServicesContacts.tsv -mapfile github_user_mapping.csv -updateorg -log /c/AutoSys/CSCR/identityservicesldap
-rc=$?; if [ $rc != 0 ]; then exit $(($rc+12000)); fi
 
 
 #cp -f /c/AutoSys/CSCR/githubreports/governance_github*_$now.csv /z/Reports/GovernanceMinder/
