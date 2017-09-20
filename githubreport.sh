@@ -70,9 +70,9 @@ cd /c/AutoSys/CSCR
 # GHE Governance
 if [ "$dayofweek" != "0" ]
 then 
-outfile="" 
+outfile="-showghegeneric" 
 else 
-outfile="-outputfile /c/AutoSys/CSCR/githubreports/governance_ghe_$now.tsv" 
+outfile="-showghegeneric -outputfile /c/AutoSys/CSCR/githubreports/governance_ghe_$now.tsv" 
 fi
 java -Xmx1024m -jar githubrepldap.jar -inputfile /c/AutoSys/CSCR/githubreports/attestation_github_$now.tsv -repofile /c/AutoSys/CSCR/githubreports/all_repositories_$now.csv -orgfile /c/AutoSys/CSCR/githubreports/all_organizations_$now.csv -userfile /c/AutoSys/CSCR/githubreports/all_users_$now.csv $outfile -log /c/AutoSys/CSCR/githubrepldap
 rc=$?; if [ $rc != 0 ]; then exit $(($rc+7000)); fi
@@ -92,6 +92,7 @@ if [ "$dayofweek" != "0" ]
 then 
 outfile=""
 else 
+#outfile="-showterminated -outputfile /c/AutoSys/CSCR/githubreports/governance_endevor_$now.tsv"
 outfile="-outputfile /c/AutoSys/CSCR/githubreports/governance_endevor_$now.tsv"
 fi
 java -Xmx1024m -jar endevorrepldap.jar $outfile -log /c/AutoSys/CSCR/endevorrepldap
@@ -103,17 +104,19 @@ then
 outfile=""
 sleep 3600
 else 
+#outfile="-showterminated -outputfile /c/AutoSys/CSCR/githubreports/governance_mainframe_$now.tsv"
 outfile="-outputfile /c/AutoSys/CSCR/githubreports/governance_mainframe_$now.tsv"
 fi
 java -Xmx1024m -jar zOSrepldap.jar $outfile -log /c/AutoSys/CSCR/zOSrepldap
 rc=$?; if [ $rc != 0 ]; then exit $(($rc+11000)); fi
 
 # github.com CA IDS
-java -Xmx1024m -jar identityservicesldap.jar -add IdentityServicesAddUsers.csv -ADgroups IdentityServicesADGroups.tsv -contacts IdentityServicesContacts.tsv -mapfile github_user_mapping.csv -updateorg -log /c/AutoSys/CSCR/identityservicesldap
+java -Xmx1024m -jar identityservicesldap.jar -add IdentityServicesAddUsers.csv -ADgroups IdentityServicesADGroups.tsv -contacts IdentityServicesContacts.tsv -mapfile github_user_mapping.csv -log /c/AutoSys/CSCR/identityservicesldap
 rc=$?; if [ $rc != 0 ]; then exit $(($rc+12000)); fi
 
 
 #github.com raw usage data
+#sleep 3600
 cd /c/AutoSys/Github/githubreports
 ruby attestation_by_owner_githubcom.rb $2 "RallySoftware" > /c/AutoSys/CSCR/githubreports/attestation_githubcom_$now.tsv 
 rc=$?; if [ $rc != 0 ]; then exit $(($rc+3000)); fi
@@ -126,12 +129,12 @@ ruby attestation_by_owner_githubcom.rb $2 "flowdock" >> /c/AutoSys/CSCR/githubre
 rc=$?; if [ $rc != 0 ]; then exit $(($rc+3000)); fi
 ruby attestation_by_owner_githubcom.rb $2 "CATechnologies" >> /c/AutoSys/CSCR/githubreports/attestation_githubcom_$now.tsv 
 rc=$?; if [ $rc != 0 ]; then exit $(($rc+3000)); fi
-ruby attestation_by_owner_githubcom.rb $2 "RallyCommunity" >> /c/AutoSys/CSCR/githubreports/attestation_githubcom_$now.tsv 
-rc=$?; if [ $rc != 0 ]; then exit $(($rc+3000)); fi
-sleep 3600
 ruby attestation_by_owner_githubcom.rb $2 "waffleio" >> /c/AutoSys/CSCR/githubreports/attestation_githubcom_$now.tsv 
 rc=$?; if [ $rc != 0 ]; then exit $(($rc+3000)); fi
+sleep 3600
 ruby attestation_by_owner_githubcom.rb $2 "Blazemeter" >> /c/AutoSys/CSCR/githubreports/attestation_githubcom_$now.tsv 
+rc=$?; if [ $rc != 0 ]; then exit $(($rc+3000)); fi
+ruby attestation_by_owner_githubcom.rb $2 "RallyCommunity" >> /c/AutoSys/CSCR/githubreports/attestation_githubcom_$now.tsv 
 rc=$?; if [ $rc != 0 ]; then exit $(($rc+3000)); fi
 
 # github.com Governance
