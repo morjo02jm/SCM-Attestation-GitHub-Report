@@ -123,6 +123,16 @@ ghe.all_users().each do |org|
 		  repos = ghe.repos(org.login, {:accept => 'application/vnd.github.ironman-preview+json'}).map{ |r| [r.name, r.permissions, r.private] }
 		rescue  Octokit::NotFound
 		  repos = ['']
+		rescue  Octokit::Repository
+		  repos = ['']
+		rescue  Octokit::InvalidRepository
+		  repos = ['']
+		rescue  Octokit::RepositoryUnavailable
+		  repos = ['']
+		rescue  Octokit::Error
+		  repos = ['']
+		rescue  URI::InvalidURIError
+		  repos = ['']		
 		end
 
         last = ""		
