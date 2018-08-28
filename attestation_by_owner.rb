@@ -34,7 +34,7 @@ puts "Organization\tTeam\tRepository\tRepository Type\tUser ID\tCan Push\tCan Pu
 #  c) for user repositories, we fetch the permissions
 
 ghe.all_users().each do |org|
-	if org.type == 'Organization'
+	if (org.type == 'Organization' && org.login != 'ca-inner-source' && org.login != 'Analytics')
 		admins = ghe.organization_members(org.login, { :role => 'admin' }).map(&:login)
 				
 # repositories by teams	
@@ -118,7 +118,7 @@ ghe.all_users().each do |org|
                 end # not owner			
 			end # collaborators
 		end #each repo
-	else #org.type == 'User'
+	elsif org.type == 'User'
 		begin
 		  repos = ghe.repos(org.login, {:accept => 'application/vnd.github.ironman-preview+json'}).map{ |r| [r.name, r.permissions, r.private] }
 		rescue  Octokit::NotFound
@@ -141,9 +141,17 @@ ghe.all_users().each do |org|
 			team = org.login
 			org_admin = 'N/A'
 			reponame = repo[0]
-			push = repo[1]["push"] ? 'Yes' : 'No'
-			pull = repo[1]["pull"] ? 'Yes' : 'No'
-			admin = repo[1]["admin"] ? 'Yes' : 'No'
+			
+			if (repo[1] != nil)
+				push = repo[1]["push"] ? 'Yes' : 'No'
+				pull = repo[1]["pull"] ? 'Yes' : 'No'
+				admin = repo[1]["admin"] ? 'Yes' : 'No'
+			else
+				push  = 'No'
+				pull  = 'No'
+				admin = 'No'
+			end 
+				
 			type = repo[2]? 'Private' : 'Public'
 			this = "#{orgname}\t#{team}\t#{reponame}\t#{type}\t#{org.login}\t#{push}\t#{pull}\t#{admin}\t#{org_admin}"		
 			if (!(this == last))
@@ -151,6 +159,7 @@ ghe.all_users().each do |org|
 			end
 			last = this
         end # user repos	
+	else #org.type == 'Bot'
 	end #check user type
 end #each Organization
 
