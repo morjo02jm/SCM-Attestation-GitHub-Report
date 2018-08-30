@@ -222,6 +222,10 @@ rc=$?; if [ $rc != 0 ]; then $mailme "attestation_ghc_sts-atlas" $rc; exit $rc; 
 sleep $s3
 ruby attestation_by_owner_githubcom.rb $2 "Runscope" >> /c/AutoSys/CSCR/githubreports/attestation_githubcom_$now.tsv 
 rc=$?; if [ $rc != 0 ]; then $mailme "attestation_ghc_Runscope" $rc; exit $rc; fi
+ruby attestation_by_owner_githubcom.rb $2 "sourceclear" >> /c/AutoSys/CSCR/githubreports/attestation_githubcom_$now.tsv 
+rc=$?; if [ $rc != 0 ]; then $mailme "attestation_ghc_sourceclear" $rc; exit $rc; fi
+ruby attestation_by_owner_githubcom.rb $2 "srcclr" >> /c/AutoSys/CSCR/githubreports/attestation_githubcom_$now.tsv 
+rc=$?; if [ $rc != 0 ]; then $mailme "attestation_ghc_srcclr" $rc; exit $rc; fi
 
 #if [ $dayofweek -eq "3" ]
 #then 
